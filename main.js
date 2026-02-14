@@ -2,6 +2,8 @@ const input_field = document.querySelector('.input_field');
 const calculator_buttons = document.querySelector('.button_calc');
 const result_operation = document.querySelector('.result_operation');
 
+const operators = ['+', '-', '*', '/', '.', '%'];
+
 
 calculator_buttons.addEventListener('click', function(e){
     if (!e.target.classList.contains('default_button')) return;
@@ -45,11 +47,35 @@ calculator_buttons.addEventListener('click', function(e){
         return;
     }
 
-    if(currentInput === '0'){
-        input_field.innerText = buttonText;
-    } else {
-        input_field.innerText += buttonText;
+    if (e.target.id === 'inversion'){
+        let currentDisplay = input_field.innerText;
+
+        let lastNumberRegex = /(-?\d+(\.\d+)?)$/;
+
+        input_field.innerText = currentDisplay.replace(lastNumberRegex, (match) => {
+            return (Number(match) * -1).toString();
+        });
+        return;
     }
 
-    //РЕЛІЗУВАТИ РОБОТУ ІНВЕРСІЇ +/-
+
+    if(currentInput === '0'){
+        if(buttonText === '.' ) {
+            input_field.innerText = '0.';
+        } else if(operators.includes(buttonText)){
+            if(buttonText === '-') input_field.innerText = buttonText;
+            return;
+        } else {
+            input_field.innerText = buttonText;
+        }
+    } else {
+        const lastChar = currentInput.slice(-1);
+        if (operators.includes(buttonText)){
+            if (operators.includes(lastChar)){
+                input_field.innerText = currentInput.slice(0, -1) + buttonText;
+                return;
+            }
+        }
+        input_field.innerText += buttonText;
+    }
 })
